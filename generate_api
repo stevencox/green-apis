@@ -1,0 +1,49 @@
+
+#!/bin/bash
+
+set -x
+set -e
+
+app=chemotext
+api_name=$( echo $app | python -c 'import sys;print (sys.stdin.read().strip().capitalize())' )
+swaggerhub_files="https://app.swaggerhub.com/apiproxy/schema/file"
+
+install_swagger_codegen () {
+    if [ ! -d swagger-codegen ]; then
+        git clone git@github.com:swagger-api/swagger-codegen.git
+        cd swagger-codegen
+        mvn
+    fi
+}
+
+get_spec () {
+    echo ${swaggerhub_files}/stevencox/${api_name}/1.0.0/swagger.yaml
+    wget -O- ${swaggerhub_files}/stevencox/${api_name}/1.0.0/swagger.yaml > ${app}-swagger.yaml
+}
+
+gen_code () {
+    gen_dir=${app}/src
+    mkdir -p ${gen_dir}
+#    java -jar swagger-codegen/modules/swagger-codegen-cli/target/swagger-codegen-cli.jar config-help \
+#         -l python-flask 
+#    return
+    java -jar swagger-codegen/modules/swagger-codegen-cli/target/swagger-codegen-cli.jar generate \
+         --template-dir templates \
+         -i ${app}-swagger.yaml \
+         -l python-flask \
+         -o ${gen_dir}
+    java -jar swagger-codegen/modules/swagger-codegen-cli/target/swagger-codegen-cli.jar generate \
+         --template-dir templates \
+         -i ${app}-swagger.yaml \
+         -l python-flask \
+         -o ${gen_dir} \
+         -D debugOperations=true
+}
+
+install_swagger_codegen
+
+get_spec
+
+gen_code
+
+exit 0
