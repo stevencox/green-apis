@@ -1,0 +1,8 @@
+#!/bin/bash
+
+set -x
+set -e
+
+PYTHONPATH=chemotext/src/ python chemotext/src/swagger_server/__main__.py
+
+exit 0
