@@ -1,0 +1,81 @@
+swagger: '2.0'
+info:
+  description: Chemotext
+  version: 1.0.0
+  title: Chemotext API
+  contact:
+    name: Steve Cox
+    email: scox@renci.org
+    x-role: responsible developer
+    x-id: https://github.com/stevencox
+  license:
+    name: Apache 2.0
+    url: http://www.apache.org/licenses/LICENSE-2.0.html
+tags:
+- name: support
+  description: Support API - develops evidence connecting terms.
+# Added by API Auto Mocking Plugin
+host: stars-app.renci.org
+basePath: /v1
+schemes:
+ - https
+# - http
+#servers:
+#  - url: http://localhost:8080/v1
+#    description: Local development server
+#  - url: https://stars-app.renci.org/chemotext/v1
+#    description: Production server.
+paths:
+  /support:
+    get:
+      tags:
+      - support
+      summary: Connects terms via publications.
+      operationId: get_support
+      description: |
+        Given two terms, find articles in chemotext that connect them. |
+        If nothing is found, return empty.
+      produces:
+      - application/json
+      parameters:
+      - in: query
+        name: searchStringA
+        description: First term to look for.
+        required: true
+        type: string
+        x-valueType:
+          - 'http://identifiers.org/mesh/'
+        x-requestTemplate:
+          - valueType: 'http://identifiers.org/mesh/'
+            template: v1/support?searchStringA={{input_a}}&searchStringB={{input_b}}
+      - in: query
+        name: searchStringB
+        description: Second term to look for.
+        type: string
+      responses:
+        '200':
+          description: List of publications connecting searh terms.
+          schema:
+            type: object
+            properties:
+              vals:
+                type: array
+                items:
+                  type: object
+                  properties:
+                    date:
+                      type: integer
+                      example: 20140522
+                    pmid:
+                      type: integer
+                      example: 24997544
+                    title:
+                      type: string
+                      example: "Gitelman syndrome."
+          x-responseValueType:
+            - path: pmid
+              valueType: 'http://identifiers.org/pubmed/'
+          x-JSONLDContext:
+            'https://raw.githubusercontent.com/NCATS-Tangerine/translator-api-registry/master/chemotext/jsonld_context/pmid_context.json'
+        400:
+          description: bad input parameter

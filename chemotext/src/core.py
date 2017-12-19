@@ -20,14 +20,11 @@ class SupportControllerImpl:
 
         :rtype: List[str]
         """
-        print ("search_string_a: {} search_string_b: {}".format (search_string_a, search_string_b))
         response = self.chemotext.query (
             query="MATCH (d:Term)-[r1]-(a:Art)-[r2]-(t:Term) WHERE d.name=~'%s' AND t.name=~'%s' RETURN a LIMIT %d" % (
                 search_string_a, search_string_b, limit))
         articles = []
-        print (response)
         for result in response['results']:
             for data in result['data']:
                 articles += data['row']
-        print ("articles: {}".format (articles))
         return articles
