@@ -47,7 +47,7 @@ MarkupSafe==1.0
 marshmallow==2.15.0
 mistune==0.7.4
 mock==2.0.0
-nbconvert==5.3.1
+nbconvert==6.5.1
 nbformat==4.4.0
 neo4jrestclient==2.1.1
 networkx==1.11
